@@ -1,43 +1,41 @@
-const express = require('express');
-const app = express();
-const port = 3000;
+var createError = require('http-errors');
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
 
-// Data pengguna (biasanya ini akan berasal dari database)
-const users = [
-  { id: 1, email: "george.bluth@reqres.in", first_name: "George", last_name: "Bluth", avatar: "https://reqres.in/img/faces/1-image.jpg" },
-  { id: 2, email: "janet.weaver@reqres.in", first_name: "Janet", last_name: "Weaver", avatar: "https://reqres.in/img/faces/2-image.jpg" },
-  // ... tambahkan lebih banyak pengguna ...
-  { id: 12, email: "rachel.howell@reqres.in", first_name: "Rachel", last_name: "Howell", avatar: "https://reqres.in/img/faces/12-image.jpg" }
-];
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
 
-// Fungsi untuk mendapatkan pengguna dengan paginasi
-function getPaginatedUsers(page, perPage) {
-  const start = (page - 1) * perPage;
-  const end = start + perPage;
-  return users.slice(start, end);
-}
+var app = express();
 
-// Endpoint API
-app.get('/api/users', (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const perPage = parseInt(req.query.per_page) || 6;
-  const paginatedUsers = getPaginatedUsers(page, perPage);
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
 
-  const response = {
-    page: page,
-    per_page: perPage,
-    total: users.length,
-    total_pages: Math.ceil(users.length / perPage),
-    data: paginatedUsers,
-    support: {
-      url: "https://reqres.in/#support-heading",
-      text: "To keep ReqRes free, contributions towards server costs are appreciated!"
-    }
-  };
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
-  res.json(response);
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
 });
 
-app.listen(port, () => {
-  console.log(`Server berjalan di http://localhost:${port}`);
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
 });
+
+module.exports = app;
