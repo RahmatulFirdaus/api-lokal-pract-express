@@ -1,28 +1,28 @@
-const e = require("express")
-
+const dbModel = require('../models/book.js');
 //create
 const postBook = (req, res) => {
   res.json({
-     message: 'Get book data',
-     data: req.body
-    })
+    message: 'Get book data',
+    data: req.body
+  })
 }
 
 //read
-const getBook = (req, res) => {
-  const data = {
-    id: 1,
-    name: 'Berchay',
-    email: 'XvSf4@example.com'
-  }
-  res.json({
-     message: 'Berhasil',
-     data: data
+const getBook = async (req, res) => {
+  //[data] agar yang terpanggil hanya isi row
+  try {
+    const [data] = await dbModel.getAllBook();//implementasi async dan await karena dbpool bersifat asyncronus
+    res.json({
+      message: 'Berhasil',
+      data: data
     })
+  } catch (error) {
+
+  }
 }
 
 //update
-const updateBook = (req, res) =>{
+const updateBook = (req, res) => {
   const { id } = req.params
   console.log(req.params)
   res.json({
@@ -31,11 +31,11 @@ const updateBook = (req, res) =>{
 }
 
 //delete
-const deleteBook = (req, res) =>{
+const deleteBook = (req, res) => {
   const { id } = req.params
   res.json({
     message: 'Delete book data',
-    data:{
+    data: {
       id: id,
       name: 'Berchay',
       email: 'XvSf4@example.com'
