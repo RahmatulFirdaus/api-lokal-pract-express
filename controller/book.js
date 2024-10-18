@@ -17,7 +17,10 @@ const getBook = async (req, res) => {
       data: data
     })
   } catch (error) {
-
+    res.status(500).json({
+      message: 'Internal Server Error',
+      statusError: error
+    })
   }
 }
 

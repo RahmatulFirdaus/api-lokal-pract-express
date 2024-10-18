@@ -41,8 +41,8 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-const ip = '127.0.0.1';
-const port = '3000';
+const ip = process.env.IP;
+const port = process.env.PORT;
 console.log(`cek:  http://${ip}:${port}`);
 
 module.exports = app;
