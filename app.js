@@ -4,13 +4,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-
 var indexRouter = require('./routes/index');
-var bookRouter = require('./routes/book');
+const bookRouter = require('./routes/book');
 
 var app = express();
-
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -41,8 +38,10 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-const ip = process.env.IP;
 const port = process.env.PORT;
-console.log(`cek:  http://${ip}:${port}`);
+const server = process.env.IP;
 
+app.listen(port, server, () => {
+  console.log(`Server running on port http://${server}:${port}`);
+})
 module.exports = app;
